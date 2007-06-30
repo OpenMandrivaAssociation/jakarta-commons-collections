@@ -43,13 +43,13 @@
 %define section         free
 
 Name:       jakarta-%{short_name}
-Version:    3.1
-Release:    %mkrel 9.2.1.1
+Version:    3.2
+Release:    %mkrel 1.3
 Epoch:      0
 Summary:    Provides new interfaces, implementations and utilities for Java Collections
 License:    Apache Software License 
 Group:      Development/Java
-Source0:    http://www.apache.org/dist/jakarta/commons/%{base_name}/source/%{short_name}-%{version}-src.tar.gz
+Source0:    http://www.apache.org/dist/jakarta/commons/%{base_name}/source/%{short_name}-%{version}-src-MDVCLEAN.tar.bz2
 Source1:    pom-maven2jpp-depcat.xsl
 Source2:    pom-maven2jpp-newdepmap.xsl
 Source3:    pom-maven2jpp-mapdeps.xsl
@@ -60,10 +60,6 @@ Source5:    commons-build.tar.gz
 Source6:    collections-tomcat5-build.xml
 
 Patch0:         %{name}-javadoc-nonet.patch
-Patch1:         commons-collections-3.1-project_xml.patch
-Patch2:         commons-collections-3.1-navigation_xml.patch
-Patch3:         commons-collections-3.1-project_properties.patch
-Patch4:         commons-collections-3.1-build_xml.patch
 
 Url:            http://jakarta.apache.org/commons/%{base_name}/
 BuildRequires:  ant
@@ -173,19 +169,12 @@ cat <<EOT
 
 EOT
 
-%setup -q -n %{short_name}-%{version}
+%setup -q -n %{short_name}-%{version}-src
 gzip -dc %{SOURCE5} | tar xf -
 # remove all binary libs
 find . -name "*.jar" -exec rm -f {} \;
 
 %patch0 -p1
-%patch1 -b .sav
-%patch2 -b .sav
-%patch3 -b .sav
-# Avoid fail on error for GCJ. See FIXME below.
-%if %{gcj_support}
-%patch4 -b .sav
-%endif
 cp %{SOURCE6} .
 
 # Fix file eof
