@@ -113,7 +113,7 @@ such as union, intersection, and closure.
 
 %package testframework
 Summary:        Testframework for %{name}
-Group:          Development/Testing
+Group:          Development/Java
 Requires:       %{name} = %{epoch}:%{version}-%{release}
 
 %if %{gcj_support}
@@ -127,14 +127,14 @@ Requires(postun):       java-gcj-compat
 
 %package javadoc
 Summary:        Javadoc for %{name}
-Group:          Development/Documentation
+Group:          Development/Java
 
 %description javadoc
 %{summary}.
 
 %package tomcat5
 Summary:        Jakarta Commons Collection dependency for Tomcat5
-Group:          Development/Libraries/Java
+Group:          Development/Java
 
 %if %{gcj_support}
 BuildRequires:          java-gcj-compat-devel
@@ -147,7 +147,7 @@ A package that is specifically designed to fulfill to a Tomcat5 dependency.
 
 %package testframework-javadoc
 Summary:        Javadoc for %{name}-testframework
-Group:          Development/Documentation
+Group:          Development/Java
 
 %description testframework-javadoc
 %{summary}.
@@ -155,7 +155,7 @@ Group:          Development/Documentation
 %if %{with_maven}
 %package manual
 Summary:        Documents for %{name}
-Group:          Development/Documentation
+Group:          Development/Java
 
 %description manual
 %{summary}.
