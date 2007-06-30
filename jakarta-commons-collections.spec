@@ -315,7 +315,7 @@ rm -rf $RPM_BUILD_ROOT
 %if %{gcj_support}
 # (anssi) own the dir:
 %dir  %{_libdir}/gcj/%{name}
-%attr(-,root,root) %{_libdir}/gcj/%{name}/jakarta-commons-collections-3.1.jar.*
+%attr(-,root,root) %{_libdir}/gcj/%{name}/jakarta-commons-collections-%{version}.jar.*
 %endif
 
 %files testframework
@@ -326,7 +326,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_javadir}/%{short_name}-testframework.jar
 
 %if %{gcj_support}
-%attr(-,root,root) %{_libdir}/gcj/%{name}/jakarta-commons-collections-testframework-3.1.jar.*
+%attr(-,root,root) %{_libdir}/gcj/%{name}/jakarta-commons-collections-testframework-%{version}.jar.*
 %endif
 
 %files tomcat5
