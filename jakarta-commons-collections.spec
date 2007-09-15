@@ -44,7 +44,7 @@
 
 Name:       jakarta-%{short_name}
 Version:    3.2
-Release:    %mkrel 1.3
+Release:    %mkrel 1.4
 Epoch:      0
 Summary:    Provides new interfaces, implementations and utilities for Java Collections
 License:    Apache Software License 
@@ -92,8 +92,6 @@ Obsoletes:  %{short_name} < %{epoch}:%{version}-%{release}
 
 %if %{gcj_support}
 BuildRequires:          java-gcj-compat-devel
-Requires(post):         java-gcj-compat
-Requires(postun):       java-gcj-compat
 %endif
 
 %description
@@ -118,8 +116,6 @@ Requires:       %{name} = %{epoch}:%{version}-%{release}
 
 %if %{gcj_support}
 BuildRequires:          java-gcj-compat-devel
-Requires(post):         java-gcj-compat
-Requires(postun):       java-gcj-compat
 %endif
 
 %description testframework
@@ -138,8 +134,6 @@ Group:          Development/Java
 
 %if %{gcj_support}
 BuildRequires:          java-gcj-compat-devel
-Requires(post):         java-gcj-compat
-Requires(postun):       java-gcj-compat
 %endif
 
 %description tomcat5
