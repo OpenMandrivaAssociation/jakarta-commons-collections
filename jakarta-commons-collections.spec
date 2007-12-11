@@ -44,27 +44,28 @@
 
 Name:       jakarta-%{short_name}
 Version:    3.2
-Release:    %mkrel 1.4
+Release:    %mkrel 2.0.1
 Epoch:      0
 Summary:    Provides new interfaces, implementations and utilities for Java Collections
 License:    Apache Software License 
 Group:      Development/Java
-Source0:    http://www.apache.org/dist/jakarta/commons/%{base_name}/source/%{short_name}-%{version}-src-MDVCLEAN.tar.bz2
+Source0:    http://www.apache.org/dist/jakarta/commons/%{base_name}/source/%{short_name}-%{version}-src.tar.gz
 Source1:    pom-maven2jpp-depcat.xsl
 Source2:    pom-maven2jpp-newdepmap.xsl
 Source3:    pom-maven2jpp-mapdeps.xsl
-Source4:    commons-collections-3.1-jpp-depmap.xml
-Source5:    commons-build.tar.gz
+Source4:    commons-collections-3.2-jpp-depmap.xml
+Source5:    %{short_name}-%{version}.pom
 # svn export -r '{2007-02-15}' http://svn.apache.org/repos/asf/jakarta/commons/proper/commons-build/trunk/ commons-build
 # tar czf commons-build.tar.gz commons-build
 Source6:    collections-tomcat5-build.xml
 
 Patch0:         %{name}-javadoc-nonet.patch
+Patch1:         %{name}-navigation.patch
 
 Url:            http://jakarta.apache.org/commons/%{base_name}/
 BuildRequires:  ant
 BuildRequires:  ant-junit
-BuildRequires:  jpackage-utils >= 0:1.6
+BuildRequires:  jpackage-utils >= 0:1.7.2
 BuildRequires:  xml-commons-apis >= 1.3
 %if %{with_maven}
 BuildRequires:  maven >= 0:1.1
@@ -164,11 +165,11 @@ cat <<EOT
 EOT
 
 %setup -q -n %{short_name}-%{version}-src
-gzip -dc %{SOURCE5} | tar xf -
 # remove all binary libs
 find . -name "*.jar" -exec rm -f {} \;
 
-%patch0 -p1
+%patch0 -p1 -b .sav0
+%patch1 -b .sav1
 cp %{SOURCE6} .
 
 # Fix file eof
@@ -191,7 +192,8 @@ for p in $(find . -name project.xml); do
 done
 echo >> $DEPCAT
 echo '</depset>' >> $DEPCAT
-/usr/bin/saxon $DEPCAT %{SOURCE2} > commons-collections-3.1-depmap.new.xml
+/usr/bin/saxon $DEPCAT %{SOURCE2} > %{short_name}-%{version}-depmap.new.xml
+fi
 
 for p in $(find . -name project.xml); do
     pushd $(dirname $p)
@@ -235,9 +237,14 @@ install -m 644 build/%{short_name}-testframework-%{version}.jar $RPM_BUILD_ROOT%
 
 #tomcat5
 install -m 644 collections-tomcat5/%{short_name}-tomcat5.jar $RPM_BUILD_ROOT%{_javadir}/%{name}-tomcat5-%{version}.jar
-
+%add_to_maven_depmap %{short_name} %{short_name} %{version} JPP %{short_name}
 (cd $RPM_BUILD_ROOT%{_javadir} && for jar in *-%{version}*; do ln -sf ${jar} `echo $jar| sed  "s|jakarta-||g"`; done)
 (cd $RPM_BUILD_ROOT%{_javadir} && for jar in *-%{version}*; do ln -sf ${jar} `echo $jar| sed  "s|-%{version}||g"`; done)
+
+# pom
+install -d -m 755 $RPM_BUILD_ROOT%{_datadir}/maven2/poms
+install -m 644 %{SOURCE5} \
+    $RPM_BUILD_ROOT%{_datadir}/maven2/poms/JPP-%{short_name}.pom
 
 # javadoc
 install -d -m 755 $RPM_BUILD_ROOT%{_javadocdir}/%{name}-%{version}
@@ -268,11 +275,13 @@ cp -pr target/docs/* $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}
 rm -rf $RPM_BUILD_ROOT
 
 %post
+%update_maven_depmap
 %if %{gcj_support}
 %{update_gcjdb}
 %endif
 
 %postun
+%update_maven_depmap
 %if %{gcj_support}
 %{clean_gcjdb}
 %endif
@@ -305,6 +314,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_javadir}/%{name}.jar
 %{_javadir}/%{short_name}-%{version}.jar
 %{_javadir}/%{short_name}.jar
+%{_datadir}/maven2/poms/*
+%{_mavendepmapfragdir}
 
 %if %{gcj_support}
 # (anssi) own the dir:
