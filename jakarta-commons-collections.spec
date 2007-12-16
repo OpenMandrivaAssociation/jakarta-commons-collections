@@ -44,7 +44,7 @@
 
 Name:       jakarta-%{short_name}
 Version:    3.2
-Release:    %mkrel 2.0.2
+Release:    %mkrel 2.0.3
 Epoch:      0
 Summary:    Provides new interfaces, implementations and utilities for Java Collections
 License:    Apache Software License 
@@ -65,7 +65,7 @@ Patch1:         %{name}-navigation.patch
 Url:            http://jakarta.apache.org/commons/%{base_name}/
 BuildRequires:  ant
 BuildRequires:  ant-junit
-BuildRequires:  jpackage-utils >= 0:1.7.2
+BuildRequires:  java-rpmbuild >= 0:1.7.2
 BuildRequires:  xml-commons-apis >= 1.3
 %if %{with_maven}
 BuildRequires:  maven >= 0:1.1
