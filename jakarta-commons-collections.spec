@@ -87,7 +87,6 @@ BuildRequires:  saxon-scripts
 %if ! %{gcj_support}
 BuildArch:      noarch
 %endif
-BuildRoot:  %{_tmppath}/%{name}-buildroot
 Provides:   %{short_name} = %{epoch}:%{version}-%{release}
 Obsoletes:  %{short_name} < %{epoch}:%{version}-%{release}
 
