@@ -49,6 +49,7 @@ Epoch:      0
 Summary:    Provides new interfaces, implementations and utilities for Java Collections
 License:    Apache Software License 
 Group:      Development/Java
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Source0:    http://www.apache.org/dist/jakarta/commons/%{base_name}/source/%{short_name}-%{version}-src.tar.gz
 Source1:    pom-maven2jpp-depcat.xsl
 Source2:    pom-maven2jpp-newdepmap.xsl
