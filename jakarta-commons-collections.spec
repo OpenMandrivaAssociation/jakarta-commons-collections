@@ -43,8 +43,8 @@
 %define section         free
 
 Name:       jakarta-%{short_name}
-Version:    3.2
-Release:    %mkrel 2.0.3
+Version:    3.2.1
+Release:    %mkrel 0.0.1
 Epoch:      0
 Summary:    Provides new interfaces, implementations and utilities for Java Collections
 License:    Apache Software License 
@@ -55,13 +55,11 @@ Source1:    pom-maven2jpp-depcat.xsl
 Source2:    pom-maven2jpp-newdepmap.xsl
 Source3:    pom-maven2jpp-mapdeps.xsl
 Source4:    commons-collections-3.2-jpp-depmap.xml
-Source5:    %{short_name}-%{version}.pom
 # svn export -r '{2007-02-15}' http://svn.apache.org/repos/asf/jakarta/commons/proper/commons-build/trunk/ commons-build
 # tar czf commons-build.tar.gz commons-build
 Source6:    collections-tomcat5-build.xml
 
 Patch0:         %{name}-javadoc-nonet.patch
-Patch1:         %{name}-navigation.patch
 
 Url:            http://jakarta.apache.org/commons/%{base_name}/
 BuildRequires:  ant
@@ -165,15 +163,11 @@ cat <<EOT
 EOT
 
 %setup -q -n %{short_name}-%{version}-src
-# remove all binary libs
-find . -name "*.jar" -exec rm -f {} \;
-
+%remove_java_binaries
 %patch0 -p1 -b .sav0
-%patch1 -b .sav1
 cp %{SOURCE6} .
 
 # Fix file eof
-%{__sed} -i 's/\r//' STATUS.html
 %{__sed} -i 's/\r//' LICENSE.txt
 %{__sed} -i 's/\r//' PROPOSAL.html
 %{__sed} -i 's/\r//' RELEASE-NOTES.html
@@ -243,7 +237,7 @@ install -m 644 collections-tomcat5/%{short_name}-tomcat5.jar $RPM_BUILD_ROOT%{_j
 
 # pom
 install -d -m 755 $RPM_BUILD_ROOT%{_datadir}/maven2/poms
-install -m 644 %{SOURCE5} \
+install -m 644 pom.xml \
     $RPM_BUILD_ROOT%{_datadir}/maven2/poms/JPP-%{short_name}.pom
 
 # javadoc
@@ -267,9 +261,7 @@ install -d -m 755 $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}
 cp -pr target/docs/* $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}
 %endif
 
-%if %{gcj_support}
-%{_bindir}/aot-compile-rpm
-%endif
+%{gcj_compile}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -309,7 +301,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(0644,root,root,0755)
-%doc PROPOSAL.html README.txt STATUS.html LICENSE.txt RELEASE-NOTES.html NOTICE.txt
+%doc PROPOSAL.html README.txt LICENSE.txt RELEASE-NOTES.html NOTICE.txt
 %{_javadir}/%{name}-%{version}.jar
 %{_javadir}/%{name}.jar
 %{_javadir}/%{short_name}-%{version}.jar
