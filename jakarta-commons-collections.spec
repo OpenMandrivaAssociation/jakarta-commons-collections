@@ -44,7 +44,7 @@
 
 Name:       jakarta-%{short_name}
 Version:    3.2.1
-Release:    %mkrel 2.0.3
+Release:    %mkrel 2.0.4
 Epoch:      0
 Summary:    Provides new interfaces, implementations and utilities for Java Collections
 License:    Apache Software License 
