@@ -1,0 +1,7 @@
+sources:
+  "collections-tomcat5-build.xml:"	1be700ec237d106afcc429f1b159003418beea73
+  "commons-collections-3.2.1-src.tar.gz:"	6925f4a487d58538a4d3ef11d63aefdd66ee2405
+  "commons-collections-3.2-jpp-depmap.xml:"	56456a76a180a8d1bc1667ff814d0fb59532baee
+  "pom-maven2jpp-depcat.xsl:"	5861cae5f65e559ece90a7342d182f5a534b65de
+  "pom-maven2jpp-mapdeps.xsl:"	a837c6d38ea6fb127ba5bf20d917c1e8af791120
+  "pom-maven2jpp-newdepmap.xsl:"	834413ffc7f650705ce65ca2c89100153142cd92
