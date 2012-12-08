@@ -44,7 +44,7 @@
 
 Name:       jakarta-%{short_name}
 Version:    3.2.1
-Release:    %mkrel 2.0.6
+Release:    %mkrel 2.0.7
 Epoch:      0
 Summary:    Provides new interfaces, implementations and utilities for Java Collections
 License:    Apache Software License 
@@ -218,53 +218,53 @@ maven \
 %ant -f collections-tomcat5-build.xml
 
 %install
-rm -rf %{buildroot}
+rm -rf $RPM_BUILD_ROOT
 # jars
-install -d -m 755 %{buildroot}%{_javadir}
+install -d -m 755 $RPM_BUILD_ROOT%{_javadir}
 %if %{with_maven}
-install -m 644 target/%{short_name}-%{version}.jar %{buildroot}%{_javadir}/%{name}-%{version}.jar
-install -m 644 target/%{short_name}-testframework-%{version}.jar %{buildroot}%{_javadir}/%{name}-testframework-%{version}.jar
+install -m 644 target/%{short_name}-%{version}.jar $RPM_BUILD_ROOT%{_javadir}/%{name}-%{version}.jar
+install -m 644 target/%{short_name}-testframework-%{version}.jar $RPM_BUILD_ROOT%{_javadir}/%{name}-testframework-%{version}.jar
 %else
-install -m 644 build/%{short_name}-%{version}.jar %{buildroot}%{_javadir}/%{name}-%{version}.jar
-install -m 644 build/%{short_name}-testframework-%{version}.jar %{buildroot}%{_javadir}/%{name}-testframework-%{version}.jar
+install -m 644 build/%{short_name}-%{version}.jar $RPM_BUILD_ROOT%{_javadir}/%{name}-%{version}.jar
+install -m 644 build/%{short_name}-testframework-%{version}.jar $RPM_BUILD_ROOT%{_javadir}/%{name}-testframework-%{version}.jar
 %endif
 
 #tomcat5
-install -m 644 collections-tomcat5/%{short_name}-tomcat5.jar %{buildroot}%{_javadir}/%{name}-tomcat5-%{version}.jar
+install -m 644 collections-tomcat5/%{short_name}-tomcat5.jar $RPM_BUILD_ROOT%{_javadir}/%{name}-tomcat5-%{version}.jar
 %add_to_maven_depmap %{short_name} %{short_name} %{version} JPP %{short_name}
-(cd %{buildroot}%{_javadir} && for jar in *-%{version}*; do ln -sf ${jar} `echo $jar| sed  "s|jakarta-||g"`; done)
-(cd %{buildroot}%{_javadir} && for jar in *-%{version}*; do ln -sf ${jar} `echo $jar| sed  "s|-%{version}||g"`; done)
+(cd $RPM_BUILD_ROOT%{_javadir} && for jar in *-%{version}*; do ln -sf ${jar} `echo $jar| sed  "s|jakarta-||g"`; done)
+(cd $RPM_BUILD_ROOT%{_javadir} && for jar in *-%{version}*; do ln -sf ${jar} `echo $jar| sed  "s|-%{version}||g"`; done)
 
 # pom
-install -d -m 755 %{buildroot}%{_datadir}/maven2/poms
+install -d -m 755 $RPM_BUILD_ROOT%{_datadir}/maven2/poms
 install -m 644 pom.xml \
-    %{buildroot}%{_datadir}/maven2/poms/JPP-%{short_name}.pom
+    $RPM_BUILD_ROOT%{_datadir}/maven2/poms/JPP-%{short_name}.pom
 
 # javadoc
-install -d -m 755 %{buildroot}%{_javadocdir}/%{name}-%{version}
+install -d -m 755 $RPM_BUILD_ROOT%{_javadocdir}/%{name}-%{version}
 %if %{with_maven}
-cp -pr target/docs/apidocs/* %{buildroot}%{_javadocdir}/%{name}-%{version}
+cp -pr target/docs/apidocs/* $RPM_BUILD_ROOT%{_javadocdir}/%{name}-%{version}
 %else
-cp -pr build/docs/apidocs/* %{buildroot}%{_javadocdir}/%{name}-%{version}
+cp -pr build/docs/apidocs/* $RPM_BUILD_ROOT%{_javadocdir}/%{name}-%{version}
 %endif
-ln -s %{name}-%{version} %{buildroot}%{_javadocdir}/%{name}
+ln -s %{name}-%{version} $RPM_BUILD_ROOT%{_javadocdir}/%{name}
 rm -rf target/docs/apidocs
 
 # testframework-javadoc
-install -d -m 755 %{buildroot}%{_javadocdir}/%{name}-testframework-%{version}
-cp -pr build/docs/testframework/* %{buildroot}%{_javadocdir}/%{name}-testframework-%{version}
-ln -s %{name}-testframework-%{version} %{buildroot}%{_javadocdir}/%{name}-testframework 
+install -d -m 755 $RPM_BUILD_ROOT%{_javadocdir}/%{name}-testframework-%{version}
+cp -pr build/docs/testframework/* $RPM_BUILD_ROOT%{_javadocdir}/%{name}-testframework-%{version}
+ln -s %{name}-testframework-%{version} $RPM_BUILD_ROOT%{_javadocdir}/%{name}-testframework 
 
 # manual
 %if %{with_maven}
-install -d -m 755 %{buildroot}%{_docdir}/%{name}-%{version}
-cp -pr target/docs/* %{buildroot}%{_docdir}/%{name}-%{version}
+install -d -m 755 $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}
+cp -pr target/docs/* $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}
 %endif
 
 %{gcj_compile}
 
 %clean
-rm -rf %{buildroot}
+rm -rf $RPM_BUILD_ROOT
 
 %post
 %update_maven_depmap
@@ -351,4 +351,83 @@ rm -rf %{buildroot}
 %defattr(0644,root,root,0755)
 %{_docdir}/%{name}-%{version}
 %endif
+
+
+
+%changelog
+* Wed May 04 2011 Oden Eriksson <oeriksson@mandriva.com> 0:3.2.1-2.0.6mdv2011.0
++ Revision: 665798
+- mass rebuild
+
+* Fri Dec 03 2010 Oden Eriksson <oeriksson@mandriva.com> 0:3.2.1-2.0.5mdv2011.0
++ Revision: 606049
+- rebuild
+
+* Wed Mar 17 2010 Oden Eriksson <oeriksson@mandriva.com> 0:3.2.1-2.0.4mdv2010.1
++ Revision: 522964
+- rebuilt for 2010.1
+
+* Wed Sep 02 2009 Christophe Fergeau <cfergeau@mandriva.com> 0:3.2.1-2.0.3mdv2010.0
++ Revision: 425412
+- rebuild
+
+* Sat Mar 07 2009 Antoine Ginies <aginies@mandriva.com> 0:3.2.1-2.0.2mdv2009.1
++ Revision: 351269
+- rebuild
+
+* Wed Aug 06 2008 Thierry Vignaud <tv@mandriva.org> 0:3.2.1-2.0.1mdv2009.0
++ Revision: 264714
+- rebuild early 2009.0 package (before pixel changes)
+
+* Fri Apr 18 2008 Alexander Kurtakov <akurtakov@mandriva.org> 0:3.2.1-0.0.1mdv2009.0
++ Revision: 195553
+- new version, removed now bundled pom and unneeded patch1
+
+  + Thierry Vignaud <tv@mandriva.org>
+    - fix no-buildroot-tag
+    - kill re-definition of %%buildroot on Pixel's request
+
+  + Anssi Hannula <anssi@mandriva.org>
+    - buildrequire java-rpmbuild, i.e. build with icedtea on x86(_64)
+
+* Wed Dec 12 2007 Alexander Kurtakov <akurtakov@mandriva.org> 0:3.2-2.0.2mdv2008.1
++ Revision: 117605
+- bump release
+- install poms (jpp sync)
+
+* Sat Sep 15 2007 Anssi Hannula <anssi@mandriva.org> 0:3.2-1.4mdv2008.0
++ Revision: 87401
+- rebuild to filter out autorequires of GCJ AOT objects
+- remove unnecessary Requires(post) on java-gcj-compat
+
+* Sat Jun 30 2007 Anssi Hannula <anssi@mandriva.org> 0:3.2-1.3mdv2008.0
++ Revision: 46066
+- sync with FC
+
+
+* Wed Mar 14 2007 Christiaan Welvaart <spturtle@mandriva.org> 3.2-1.2mdv2007.1
++ Revision: 143751
+- rebuild for 2007.1
+
+  + Per Øyvind Karlsen <pkarlsen@mandriva.com>
+    - Import jakarta-commons-collections
+
+* Fri Jun 02 2006 David Walluck <walluck@mandriva.org> 0:3.2-1.1mdv2007.0
+- 3.2
+- rebuild for libgcj.so.7
+
+* Fri Dec 02 2005 David Walluck <walluck@mandriva.org> 0:3.1-2.2mdk
+- sync with 2jpp_2fc
+
+* Fri May 20 2005 David Walluck <walluck@mandriva.org> 0:3.1-1.1mdk
+- release
+
+* Fri Sep 17 2004 Ralph Apel <r.apel at r-apel.de> - 0:3.1-1jpp
+- Upgrade to 3.1
+
+* Tue Aug 24 2004 Randy Watler <rwatler at finali.com> - 0:2.1.1-2jpp
+- Rebuild with ant-1.6.2
+
+* Mon Jun 28 2004 Kaj J. Niemi <kajtzu@fi.basen.net> 0:2.1.1-1jpp
+- Update to 2.1.1
 
