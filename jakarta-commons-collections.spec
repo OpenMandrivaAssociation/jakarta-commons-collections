@@ -28,9 +28,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-%define _with_gcj_support 1
 %define _without_maven 1
-%define gcj_support %{?_with_gcj_support:1}%{!?_with_gcj_support:%{?_without_gcj_support:0}%{!?_without_gcj_support:%{?_gcj_support:%{_gcj_support}}%{!?_gcj_support:0}}}
+%bcond_with	gcj_support
 %bcond_without	bootstrap
 
 # If you don't want to build with maven, and use straight ant instead,
@@ -86,13 +85,13 @@ BuildRequires:  saxon
 BuildRequires:  saxon-scripts
 %endif
 
-%if ! %{gcj_support}
+%if ! %{with gcj_support}
 BuildArch:      noarch
 %endif
 Provides:   %{short_name} = %{epoch}:%{version}-%{release}
 Obsoletes:  %{short_name} < %{epoch}:%{version}-%{release}
 
-%if %{gcj_support}
+%if %{with gcj_support}
 BuildRequires:          java-gcj-compat-devel
 %endif
 
@@ -116,7 +115,7 @@ Summary:        Testframework for %{name}
 Group:          Development/Java
 Requires:       %{name} = %{epoch}:%{version}-%{release}
 
-%if %{gcj_support}
+%if %{with gcj_support}
 BuildRequires:          java-gcj-compat-devel
 %endif
 
@@ -134,7 +133,7 @@ Group:          Development/Java
 Summary:        Jakarta Commons Collection dependency for Tomcat5
 Group:          Development/Java
 
-%if %{gcj_support}
+%if %{with gcj_support}
 BuildRequires:          java-gcj-compat-devel
 %endif
 
@@ -213,7 +212,7 @@ maven \
 %if %{with bootstrap}
 %ant -Djava.io.tmpdir=. jar javadoc dist.bin dist.src
 %else
-%if %{gcj_support} || %{with bootstrap}
+%if %{with gcj_support}
 %ant -Djava.io.tmpdir=. jar javadoc tf.validate tf.jar dist.bin dist.src tf.javadoc
 %else
 %ant -Djava.io.tmpdir=. test dist tf.javadoc
@@ -274,42 +273,44 @@ install -d -m 755 $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}
 cp -pr target/docs/* $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}
 %endif
 
+%if %{with gcj_support}
 %{gcj_compile}
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %post
 %update_maven_depmap
-%if %{gcj_support}
+%if %{with gcj_support}
 %{update_gcjdb}
 %endif
 
 %postun
 %update_maven_depmap
-%if %{gcj_support}
+%if %{with gcj_support}
 %{clean_gcjdb}
 %endif
 
 %if !%{with bootstrap}
+%if %{with gcj_support}
 %post testframework
-%if %{gcj_support}
 %{update_gcjdb}
 %endif
 
+%if %{with gcj_support}
 %postun testframework
-%if %{gcj_support}
 %{clean_gcjdb}
 %endif
 %endif
 
+%if %{with gcj_support}
 %post tomcat5
-%if %{gcj_support}
 %{update_gcjdb}
 %endif
 
+%if %{with gcj_support}
 %postun tomcat5 
-%if %{gcj_support}
 %{clean_gcjdb}
 %endif
 
@@ -324,7 +325,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/maven2/poms/*
 %{_mavendepmapfragdir}
 
-%if %{gcj_support}
+%if %{with gcj_support}
 # (anssi) own the dir:
 %dir  %{_libdir}/gcj/%{name}
 %attr(-,root,root) %{_libdir}/gcj/%{name}/jakarta-commons-collections-%{version}.jar.*
@@ -338,7 +339,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_javadir}/%{short_name}-testframework-%{version}.jar
 %{_javadir}/%{short_name}-testframework.jar
 
-%if %{gcj_support}
+%if %{with gcj_support}
 %attr(-,root,root) %{_libdir}/gcj/%{name}/jakarta-commons-collections-testframework-%{version}.jar.*
 %endif
 %endif
@@ -347,7 +348,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0644,root,root,0755)
 %{_javadir}/*-tomcat5*.jar
 %doc LICENSE.txt NOTICE.txt
-%if %{gcj_support}
+%if %{with gcj_support}
 # (anssi) own the dir:
 %dir  %{_libdir}/gcj/%{name}
 %attr(-,root,root) %{_libdir}/gcj/%{name}/*-tomcat5*
