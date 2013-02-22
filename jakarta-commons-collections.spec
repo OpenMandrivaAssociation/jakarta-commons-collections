@@ -31,6 +31,7 @@
 %define _with_gcj_support 1
 %define _without_maven 1
 %define gcj_support %{?_with_gcj_support:1}%{!?_with_gcj_support:%{?_without_gcj_support:0}%{!?_without_gcj_support:%{?_gcj_support:%{_gcj_support}}%{!?_gcj_support:0}}}
+%bcond_without	bootstrap
 
 # If you don't want to build with maven, and use straight ant instead,
 # give rpmbuild option '--without maven'
@@ -63,7 +64,9 @@ Patch0:         %{name}-javadoc-nonet.patch
 
 Url:            http://jakarta.apache.org/commons/%{base_name}/
 BuildRequires:  ant
+%if !%{with bootstrap}
 BuildRequires:  ant-junit
+%endif
 BuildRequires:  java-rpmbuild >= 0:1.7.2
 BuildRequires:  xml-commons-apis >= 1.3
 %if %{with_maven}
@@ -207,10 +210,14 @@ maven \
 %else
 #FIXME Enabling tests with gcj causes memory leaks!
 # See http://gcc.gnu.org/bugzilla/show_bug.cgi?id=28423
-%if %{gcj_support}
+%if %{with bootstrap}
+%ant -Djava.io.tmpdir=. jar javadoc dist.bin dist.src
+%else
+%if %{gcj_support} || %{with bootstrap}
 %ant -Djava.io.tmpdir=. jar javadoc tf.validate tf.jar dist.bin dist.src tf.javadoc
 %else
 %ant -Djava.io.tmpdir=. test dist tf.javadoc
+%endif
 %endif
 %endif
 
@@ -223,10 +230,14 @@ rm -rf $RPM_BUILD_ROOT
 install -d -m 755 $RPM_BUILD_ROOT%{_javadir}
 %if %{with_maven}
 install -m 644 target/%{short_name}-%{version}.jar $RPM_BUILD_ROOT%{_javadir}/%{name}-%{version}.jar
+%if !%{with bootstrap}
 install -m 644 target/%{short_name}-testframework-%{version}.jar $RPM_BUILD_ROOT%{_javadir}/%{name}-testframework-%{version}.jar
+%endif
 %else
 install -m 644 build/%{short_name}-%{version}.jar $RPM_BUILD_ROOT%{_javadir}/%{name}-%{version}.jar
+%if !%{with bootstrap}
 install -m 644 build/%{short_name}-testframework-%{version}.jar $RPM_BUILD_ROOT%{_javadir}/%{name}-testframework-%{version}.jar
+%endif
 %endif
 
 #tomcat5
@@ -251,9 +262,11 @@ ln -s %{name}-%{version} $RPM_BUILD_ROOT%{_javadocdir}/%{name}
 rm -rf target/docs/apidocs
 
 # testframework-javadoc
+%if !%{with bootstrap}
 install -d -m 755 $RPM_BUILD_ROOT%{_javadocdir}/%{name}-testframework-%{version}
 cp -pr build/docs/testframework/* $RPM_BUILD_ROOT%{_javadocdir}/%{name}-testframework-%{version}
 ln -s %{name}-testframework-%{version} $RPM_BUILD_ROOT%{_javadocdir}/%{name}-testframework 
+%endif
 
 # manual
 %if %{with_maven}
@@ -278,6 +291,7 @@ rm -rf $RPM_BUILD_ROOT
 %{clean_gcjdb}
 %endif
 
+%if !%{with bootstrap}
 %post testframework
 %if %{gcj_support}
 %{update_gcjdb}
@@ -286,6 +300,7 @@ rm -rf $RPM_BUILD_ROOT
 %postun testframework
 %if %{gcj_support}
 %{clean_gcjdb}
+%endif
 %endif
 
 %post tomcat5
@@ -315,6 +330,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(-,root,root) %{_libdir}/gcj/%{name}/jakarta-commons-collections-%{version}.jar.*
 %endif
 
+%if !%{with bootstrap}
 %files testframework
 %defattr(0644,root,root,0755)
 %{_javadir}/%{name}-testframework-%{version}.jar
@@ -324,6 +340,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %if %{gcj_support}
 %attr(-,root,root) %{_libdir}/gcj/%{name}/jakarta-commons-collections-testframework-%{version}.jar.*
+%endif
 %endif
 
 %files tomcat5
@@ -341,10 +358,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_javadocdir}/%{name}-%{version}
 %{_javadocdir}/%{name}
 
+%if !%{with bootstrap}
 %files testframework-javadoc
 %defattr(0644,root,root,0755)
 %{_javadocdir}/%{name}-testframework-%{version}
 %{_javadocdir}/%{name}-testframework
+%endif
 
 %if %{with_maven}
 %files manual
